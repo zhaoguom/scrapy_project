@@ -68,6 +68,7 @@ ITEM_PIPELINES = {
    'ArticleSpider.pipelines.ArticlespiderPipeline': 300,
    'ArticleSpider.pipelines.ArticleImagePipeline': 1,
    'ArticleSpider.pipelines.JsonWithEncodingPipeline': 2,
+   'ArticleSpider.pipelines.MysqlPipeline': 5,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
