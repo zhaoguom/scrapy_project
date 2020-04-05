@@ -30,10 +30,12 @@ class CnblogsSpider(scrapy.Spider):
         # urls = selector.xpath('//div[@id="news_list"]//h2[@class="news_entry"]/a/@href').extract()
 
         # 获取新闻列表页中的新闻url列表交给scrapy处理
-        post_nodes = response.xpath('//div[@class="news_block"]')[:1]
+        post_nodes = response.xpath('//div[@class="news_block"]')[10:20]
         for post_node in post_nodes:
             image_url = post_node.css(
                 '.entry_summary a img::attr(src)').extract_first("")
+            if image_url.startswith("//"):
+                image_url = "https:" + image_url
             post_url = post_node.css('h2 a::attr(href)').extract_first("")
             yield Request(url=parse.urljoin(response.url, post_url), meta={"front_image_url": image_url}, callback=self.parse_detail)
 
@@ -67,7 +69,8 @@ class CnblogsSpider(scrapy.Spider):
             article_item['create_date'] = create_date
             article_item['content'] = content
             article_item['tags'] = tags
-            article_item['front_image_url'] = [response.meta.get('front_image_url', '')]
+            if response.meta.get("front_image_url", []):
+                article_item['front_image_url'] = [response.meta.get('front_image_url', '')]
             article_item['url'] = response.url
             # html = requests.get(parse.urljoin(response.url, '/NewsAjax/GetAjaxNewsInfo?contentId={}'.format(post_id)))
             yield Request(url=parse.urljoin(response.url, '/NewsAjax/GetAjaxNewsInfo?contentId={}'.format(post_id)), 
