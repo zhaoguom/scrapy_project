@@ -30,7 +30,7 @@ class CnblogsSpider(scrapy.Spider):
         # urls = selector.xpath('//div[@id="news_list"]//h2[@class="news_entry"]/a/@href').extract()
 
         # 获取新闻列表页中的新闻url列表交给scrapy处理
-        post_nodes = response.xpath('//div[@class="news_block"]')[10:20]
+        post_nodes = response.xpath('//div[@class="news_block"]')
         for post_node in post_nodes:
             image_url = post_node.css(
                 '.entry_summary a img::attr(src)').extract_first("")
@@ -48,7 +48,7 @@ class CnblogsSpider(scrapy.Spider):
         if next_url == "Next >":
             next_url = response.css(
                 "div.pager a:last-child::attr(href)").extract_first("")
-            yield Request(url=parse.urljoin(response.url, post_url), callback=self.parse)
+            yield Request(url=parse.urljoin(response.url, next_url), callback=self.parse)
 
     def parse_detail(self, response):
         match_re = re.match(".*?(\d+)", response.url)
